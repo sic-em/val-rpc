@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import time
 
 import requests
@@ -7,11 +8,16 @@ import requests
 from . import config
 from .discord_rpc import DiscordPresence
 from .lockfile import LockfileNotFound, read_lockfile
+from .presence import override_party
 from .states import map_state
 from .valorant import ValorantClient
 
 
-def run(interval: int = config.POLL_INTERVAL_SECONDS) -> None:
+def run(
+    interval: int = config.POLL_INTERVAL_SECONDS,
+    party_size: int | None = None,
+    max_party_size: int | None = None,
+) -> None:
     discord = DiscordPresence(config.client_id())
     _retry(discord.connect, "Waiting for Discord")
     print("Connected to Discord. Watching VALORANT…")
@@ -38,6 +44,9 @@ def run(interval: int = config.POLL_INTERVAL_SECONDS) -> None:
             last = _idle(discord, last)
             time.sleep(interval)
             continue
+
+        if party_size is not None or max_party_size is not None:
+            presence = override_party(presence, party_size, max_party_size)
 
         in_match = presence.session_loop_state == "INGAME"
         match_start = match_start or time.time() if in_match else None
@@ -70,8 +79,16 @@ def _retry(action, message: str, delay: int = 10) -> None:
             time.sleep(delay)
 
 
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="VALORANT Discord Rich Presence")
+    parser.add_argument("--party-size", type=int, help="force the shown party count (N)")
+    parser.add_argument("--max-party-size", type=int, help="force the shown party cap (M)")
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
+    args = _parse_args()
     try:
-        run()
+        run(party_size=args.party_size, max_party_size=args.max_party_size)
     except KeyboardInterrupt:
         print("\nStopped.")

@@ -33,6 +33,15 @@ python -m val_rpc.main
 ```
 Both VALORANT and the Discord desktop app must be open.
 
+### Party size override
+
+Force the party count shown on Discord (`N of M`). Real party is unchanged.
+```powershell
+python -m val_rpc.main --party-size 5 --max-party-size 5   # always show "5 of 5"
+python -m val_rpc.main --max-party-size 4                   # keep real N, force M=4
+```
+`N` is clamped to `M`. Applies in both the lobby and the queue.
+
 ## Dev loop
 
 - mac: edit → `git push`

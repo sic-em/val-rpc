@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import base64
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 
 @dataclass(frozen=True)
@@ -51,3 +51,13 @@ class Presence:
     @classmethod
     def from_private(cls, private_b64: str) -> "Presence":
         return cls.from_raw(json.loads(base64.b64decode(private_b64)))
+
+
+def override_party(
+    p: Presence, size: int | None = None, max_size: int | None = None
+) -> Presence:
+    """Force the displayed party size. Unset fields keep the real value;
+    the current size is clamped so it never exceeds the max."""
+    new_max = max_size if max_size is not None else p.max_party_size
+    new_size = size if size is not None else p.party_size
+    return replace(p, party_size=min(new_size, new_max), max_party_size=new_max)

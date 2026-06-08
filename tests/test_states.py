@@ -1,7 +1,7 @@
 import base64
 import json
 
-from val_rpc.presence import Presence
+from val_rpc.presence import Presence, override_party
 from val_rpc.states import map_state
 
 
@@ -101,3 +101,27 @@ def test_nested_schema_parsing():
     assert s.details == "Main Menu · Competitive"
     assert s.small_image.endswith("/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/19/largeicon.png")
     assert s.large_image.endswith("/playercards/card-9/smallart.png")
+
+
+def test_override_both_numbers():
+    p = override_party(presence(sessionLoopState="MENUS", queueId="competitive",
+                                partySize=1, maxPartySize=5), size=5, max_size=5)
+    s = map_state(p)
+    assert s.state == "Party · 5 of 5"
+
+
+def test_override_clamps_size_to_max():
+    p = override_party(presence(partySize=1, maxPartySize=5), size=7, max_size=5)
+    assert p.party_size == 5 and p.max_party_size == 5
+
+
+def test_override_partial_keeps_real():
+    p = override_party(presence(partySize=2, maxPartySize=5), max_size=4)
+    assert p.party_size == 2 and p.max_party_size == 4
+
+
+def test_override_applies_in_queue():
+    p = override_party(presence(sessionLoopState="MENUS", partyState="MATCHMAKING",
+                                queueId="unrated", partySize=1, maxPartySize=5),
+                       size=5, max_size=5)
+    assert map_state(p).state == "In Queue · 5 of 5"
