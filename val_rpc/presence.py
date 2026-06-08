@@ -21,10 +21,10 @@ class Presence:
     max_party_size: int
     party_accessibility: str  # OPEN | CLOSED
     is_idle: bool
+    competitive_tier: int  # 0 = unranked, else tier index (e.g. 24 = Immortal 1)
 
     @classmethod
-    def from_private(cls, private_b64: str) -> "Presence":
-        raw = json.loads(base64.b64decode(private_b64))
+    def from_raw(cls, raw: dict) -> "Presence":
         return cls(
             session_loop_state=raw.get("sessionLoopState", ""),
             provisioning_flow=raw.get("provisioningFlow", ""),
@@ -38,4 +38,9 @@ class Presence:
             max_party_size=raw.get("maxPartySize", 5),
             party_accessibility=raw.get("partyAccessibility", "CLOSED"),
             is_idle=raw.get("isIdle", False),
+            competitive_tier=raw.get("competitiveTier", 0),
         )
+
+    @classmethod
+    def from_private(cls, private_b64: str) -> "Presence":
+        return cls.from_raw(json.loads(base64.b64decode(private_b64)))

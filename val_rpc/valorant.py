@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import base64
+import json
+
 import requests
 import urllib3
 
@@ -32,9 +35,14 @@ class ValorantClient:
             self._puuid = self._get("/chat/v1/session")["puuid"]
         return self._puuid
 
-    def fetch_self_presence(self) -> Presence | None:
-        """Return the local player's decoded presence, or None if unavailable."""
+    def fetch_self_raw(self) -> dict | None:
+        """Return the local player's decoded `private` blob as a raw dict."""
         for entry in self._get("/chat/v4/presences").get("presences", []):
             if entry.get("puuid") == self.puuid and entry.get("private"):
-                return Presence.from_private(entry["private"])
+                return json.loads(base64.b64decode(entry["private"]))
         return None
+
+    def fetch_self_presence(self) -> Presence | None:
+        """Return the local player's decoded presence, or None if unavailable."""
+        raw = self.fetch_self_raw()
+        return Presence.from_raw(raw) if raw is not None else None
