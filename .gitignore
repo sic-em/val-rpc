@@ -20,3 +20,6 @@ Thumbs.db
 
 # Stray MCP artifact
 mitm_mcp_traffic.db
+
+# pytest
+.pytest_cache/
