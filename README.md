@@ -20,21 +20,18 @@ machine without VALORANT running (`pytest`).
 
 ## Setup
 
-1. **Discord application** — create one at
-   https://discord.com/developers/applications, copy its **Application ID**.
-2. **Art assets** — under *Rich Presence → Art Assets*, upload images named by key:
-   - `valorant` (logo)
-   - `map_<name>` e.g. `map_ascent`, `map_haven`, `map_piazza`
-   - `mode_<queueId>` e.g. `mode_competitive`, `mode_deathmatch`, `mode_hurm`
-3. **Install** (on the Windows PC where VALORANT runs):
-   ```powershell
-   pip install -r requirements.txt
-   ```
-4. **Run** (VALORANT and Discord both open):
-   ```powershell
-   $env:VALRPC_CLIENT_ID = "your-application-id"
-   python -m val_rpc.main
-   ```
+Images are served directly from `media.valorant-api.com` (maps, modes, ranks,
+player cards) — Discord renders external URLs, so **no art assets need uploading**.
+The only uploaded asset is an optional `valorant` logo used as a last-resort
+fallback. The Discord application ID is baked into `config.py`
+(override with `VALRPC_CLIENT_ID`).
+
+On the Windows PC where VALORANT runs:
+```powershell
+pip install -r requirements.txt
+python -m val_rpc.main
+```
+Both VALORANT and the Discord desktop app must be open.
 
 ## Dev loop
 

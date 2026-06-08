@@ -4,12 +4,12 @@ from dataclasses import dataclass
 
 from .assets import (
     LOGO_KEY,
-    map_asset_key,
+    map_image,
     map_name,
-    mode_asset_key,
+    mode_image,
     player_card_image,
     queue_name,
-    rank_asset_key,
+    rank_image,
     rank_name,
 )
 from .presence import Presence
@@ -20,8 +20,8 @@ _RANGE_FLOWS = {"ShootingRange", "SkillTest"}
 def _small(p: Presence) -> tuple[str, str]:
     """Small image + text: rank in ranked queues, otherwise the mode icon."""
     if p.queue_id == "competitive" and p.competitive_tier > 0:
-        return rank_asset_key(p.competitive_tier), rank_name(p.competitive_tier)
-    return mode_asset_key(p.queue_id), queue_name(p.queue_id)
+        return rank_image(p.competitive_tier), rank_name(p.competitive_tier)
+    return mode_image(p.queue_id), queue_name(p.queue_id)
 
 
 def _menu_large(p: Presence) -> str:
@@ -49,7 +49,7 @@ def map_state(p: Presence) -> RpcState:
 
 def _menus(p: Presence) -> RpcState:
     if p.provisioning_flow in _RANGE_FLOWS:
-        return RpcState(details="The Range", state="Practice", large_image=LOGO_KEY)
+        return RpcState(details="The Range", state="Practice", large_image=_menu_large(p))
 
     small_image, small_text = _small(p)
     if p.party_state == "MATCHMAKING":
@@ -77,7 +77,7 @@ def _agent_select(p: Presence) -> RpcState:
     return RpcState(
         details=queue_name(p.queue_id),
         state=where,
-        large_image=map_asset_key(p.match_map),
+        large_image=map_image(p.match_map),
         small_image=small_image,
         small_text=small_text,
     )
@@ -92,7 +92,7 @@ def _ingame(p: Presence) -> RpcState:
     return RpcState(
         details=f"{mode} · {mp}" if mp else mode,
         state=f"{p.ally_score} : {p.enemy_score}",
-        large_image=map_asset_key(p.match_map),
+        large_image=map_image(p.match_map),
         small_image=small_image,
         small_text=small_text,
     )

@@ -14,7 +14,7 @@ def test_lobby():
     s = map_state(presence(sessionLoopState="MENUS", queueId="competitive", partySize=2, maxPartySize=5))
     assert s.details == "Main Menu · Competitive"
     assert s.state == "Party · 2 of 5"
-    assert s.large_image == "valorant"
+    assert s.large_image == "valorant"  # no player card -> logo fallback
 
 
 def test_idle_lobby():
@@ -27,7 +27,7 @@ def test_queue():
                            queueId="competitive", partySize=5, maxPartySize=5))
     assert s.details == "Competitive"
     assert s.state == "In Queue · 5 of 5"
-    assert s.small_image == "mode_competitive"
+    assert s.small_image.endswith("/gamemodes/96bd3920-4f36-d026-2b28-c683eb0bcac5/displayicon.png")
 
 
 def test_range():
@@ -40,7 +40,7 @@ def test_agent_select():
                            partyOwnerMatchMap="/Game/Maps/Ascent/Ascent"))
     assert s.details == "Competitive"
     assert s.state == "Agent Select · Ascent"
-    assert s.large_image == "map_ascent"
+    assert s.large_image.endswith("/maps/7eaecc1b-4337-bbf6-6ab9-04b8f06b3319/splash.png")
 
 
 def test_ingame_competitive():
@@ -49,7 +49,7 @@ def test_ingame_competitive():
                            partyOwnerMatchScoreAllyTeam=7, partyOwnerMatchScoreEnemyTeam=5))
     assert s.details == "Competitive · Haven"
     assert s.state == "7 : 5"
-    assert s.large_image == "map_haven"
+    assert s.large_image.endswith("/maps/2bee0dc9-4ffe-519b-1cbd-7fbe763a6047/splash.png")
 
 
 def test_ingame_tdm_hurm_map():
@@ -73,14 +73,14 @@ def test_unknown_map_falls_back_to_segment():
 def test_competitive_shows_rank_small_image():
     s = map_state(presence(sessionLoopState="MENUS", queueId="competitive",
                            competitiveTier=19))
-    assert s.small_image == "rank_19"
+    assert s.small_image.endswith("/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/19/largeicon.png")
     assert s.small_text == "Diamond 2"
 
 
 def test_unranked_competitive_shows_mode_icon():
     s = map_state(presence(sessionLoopState="MENUS", queueId="competitive",
                            competitiveTier=0))
-    assert s.small_image == "mode_competitive"
+    assert s.small_image.endswith("/gamemodes/96bd3920-4f36-d026-2b28-c683eb0bcac5/displayicon.png")
 
 
 def test_player_card_is_menu_large_image():
@@ -99,5 +99,5 @@ def test_nested_schema_parsing():
         "playerPresenceData": {"competitiveTier": 19, "playerCardId": "card-9"},
     }))
     assert s.details == "Main Menu · Competitive"
-    assert s.small_image == "rank_19"
+    assert s.small_image.endswith("/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/19/largeicon.png")
     assert s.large_image.endswith("/playercards/card-9/smallart.png")
