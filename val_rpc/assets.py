@@ -90,5 +90,5 @@ def rank_asset_key(tier: int) -> str:
 
 
 def player_card_image(card_id: str) -> str:
-    """External CDN URL for the equipped player card's tall art."""
-    return f"https://media.valorant-api.com/playercards/{card_id}/largeart.png"
+    """External CDN URL for the equipped player card's square art."""
+    return f"https://media.valorant-api.com/playercards/{card_id}/smallart.png"

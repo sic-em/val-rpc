@@ -86,7 +86,7 @@ def test_unranked_competitive_shows_mode_icon():
 def test_player_card_is_menu_large_image():
     s = map_state(presence(sessionLoopState="MENUS", queueId="unrated",
                            playerCardId="abc-123"))
-    assert s.large_image == "https://media.valorant-api.com/playercards/abc-123/largeart.png"
+    assert s.large_image == "https://media.valorant-api.com/playercards/abc-123/smallart.png"
 
 
 def test_nested_schema_parsing():
@@ -100,4 +100,4 @@ def test_nested_schema_parsing():
     }))
     assert s.details == "Main Menu · Competitive"
     assert s.small_image == "rank_19"
-    assert s.large_image.endswith("/playercards/card-9/largeart.png")
+    assert s.large_image.endswith("/playercards/card-9/smallart.png")
