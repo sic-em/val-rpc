@@ -68,3 +68,36 @@ def test_unknown_map_falls_back_to_segment():
     s = map_state(presence(sessionLoopState="INGAME", queueId="unrated",
                            partyOwnerMatchMap="/Game/Maps/Future/Future"))
     assert s.details == "Unrated · Future"
+
+
+def test_competitive_shows_rank_small_image():
+    s = map_state(presence(sessionLoopState="MENUS", queueId="competitive",
+                           competitiveTier=19))
+    assert s.small_image == "rank_19"
+    assert s.small_text == "Diamond 2"
+
+
+def test_unranked_competitive_shows_mode_icon():
+    s = map_state(presence(sessionLoopState="MENUS", queueId="competitive",
+                           competitiveTier=0))
+    assert s.small_image == "mode_competitive"
+
+
+def test_player_card_is_menu_large_image():
+    s = map_state(presence(sessionLoopState="MENUS", queueId="unrated",
+                           playerCardId="abc-123"))
+    assert s.large_image == "https://media.valorant-api.com/playercards/abc-123/largeart.png"
+
+
+def test_nested_schema_parsing():
+    # Patch 12.10+ nests fields under *PresenceData objects.
+    s = map_state(Presence.from_raw({
+        "isIdle": False,
+        "matchPresenceData": {"sessionLoopState": "MENUS", "queueId": "competitive",
+                              "provisioningFlow": "Invalid", "matchMap": ""},
+        "partyPresenceData": {"partyState": "DEFAULT", "partySize": 1, "maxPartySize": 5},
+        "playerPresenceData": {"competitiveTier": 19, "playerCardId": "card-9"},
+    }))
+    assert s.details == "Main Menu · Competitive"
+    assert s.small_image == "rank_19"
+    assert s.large_image.endswith("/playercards/card-9/largeart.png")

@@ -22,23 +22,30 @@ class Presence:
     party_accessibility: str  # OPEN | CLOSED
     is_idle: bool
     competitive_tier: int  # 0 = unranked, else tier index (e.g. 24 = Immortal 1)
+    player_card_id: str  # equipped player card UUID
 
     @classmethod
     def from_raw(cls, raw: dict) -> "Presence":
+        # Patch 12.10+ nests fields; older patches were flat. Fall back to `raw`.
+        match = raw.get("matchPresenceData", raw)
+        party = raw.get("partyPresenceData", raw)
+        player = raw.get("playerPresenceData", raw)
+
         return cls(
-            session_loop_state=raw.get("sessionLoopState", ""),
-            provisioning_flow=raw.get("provisioningFlow", ""),
-            party_state=raw.get("partyState", ""),
-            queue_id=raw.get("queueId", ""),
-            match_map=raw.get("partyOwnerMatchMap", "") or raw.get("matchMap", ""),
-            current_team=raw.get("partyOwnerMatchCurrentTeam", "") or "",
-            ally_score=raw.get("partyOwnerMatchScoreAllyTeam", 0),
-            enemy_score=raw.get("partyOwnerMatchScoreEnemyTeam", 0),
-            party_size=raw.get("partySize", 1),
-            max_party_size=raw.get("maxPartySize", 5),
-            party_accessibility=raw.get("partyAccessibility", "CLOSED"),
+            session_loop_state=match.get("sessionLoopState", ""),
+            provisioning_flow=match.get("provisioningFlow", ""),
+            party_state=party.get("partyState", ""),
+            queue_id=match.get("queueId", "") or raw.get("queueId", ""),
+            match_map=match.get("matchMap", "") or party.get("partyOwnerMatchMap", ""),
+            current_team=party.get("partyOwnerMatchCurrentTeam", ""),
+            ally_score=party.get("partyOwnerMatchScoreAllyTeam", 0),
+            enemy_score=party.get("partyOwnerMatchScoreEnemyTeam", 0),
+            party_size=party.get("partySize", 1),
+            max_party_size=party.get("maxPartySize", 5),
+            party_accessibility=party.get("partyAccessibility", "CLOSED"),
             is_idle=raw.get("isIdle", False),
-            competitive_tier=raw.get("competitiveTier", 0),
+            competitive_tier=player.get("competitiveTier", 0),
+            player_card_id=player.get("playerCardId", ""),
         )
 
     @classmethod

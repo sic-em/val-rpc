@@ -40,6 +40,20 @@ MAP_NAMES: dict[str, str] = {
     "/Game/Maps/PovegliaV2/RangeV2": "The Range",
 }
 
+# competitive tier index -> rank display name
+RANK_NAMES: dict[int, str] = {
+    0: "Unranked",
+    3: "Iron 1", 4: "Iron 2", 5: "Iron 3",
+    6: "Bronze 1", 7: "Bronze 2", 8: "Bronze 3",
+    9: "Silver 1", 10: "Silver 2", 11: "Silver 3",
+    12: "Gold 1", 13: "Gold 2", 14: "Gold 3",
+    15: "Platinum 1", 16: "Platinum 2", 17: "Platinum 3",
+    18: "Diamond 1", 19: "Diamond 2", 20: "Diamond 3",
+    21: "Ascendant 1", 22: "Ascendant 2", 23: "Ascendant 3",
+    24: "Immortal 1", 25: "Immortal 2", 26: "Immortal 3",
+    27: "Radiant",
+}
+
 # Discord Rich Presence asset keys (names of images uploaded to the Discord app)
 LOGO_KEY = "valorant"
 
@@ -64,3 +78,17 @@ def map_asset_key(map_path: str) -> str:
 def mode_asset_key(queue_id: str) -> str:
     """Asset image key for a game mode icon, e.g. 'mode_competitive'."""
     return f"mode_{queue_id}" if queue_id else "mode_custom"
+
+
+def rank_name(tier: int) -> str:
+    return RANK_NAMES.get(tier, "Unranked")
+
+
+def rank_asset_key(tier: int) -> str:
+    """Asset image key for a rank tier icon, e.g. 'rank_19'."""
+    return f"rank_{tier}"
+
+
+def player_card_image(card_id: str) -> str:
+    """External CDN URL for the equipped player card's tall art."""
+    return f"https://media.valorant-api.com/playercards/{card_id}/largeart.png"
