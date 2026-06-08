@@ -1,5 +1,3 @@
-"""Map a decoded Presence to a Discord Rich Presence state (pure business logic)."""
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -21,7 +19,6 @@ class RpcState:
 
 
 def map_state(p: Presence) -> RpcState:
-    """Pure mapping: presence -> what Discord should show."""
     if p.session_loop_state == "INGAME":
         return _ingame(p)
     if p.session_loop_state == "PREGAME":
@@ -62,7 +59,9 @@ def _agent_select(p: Presence) -> RpcState:
 
 
 def _ingame(p: Presence) -> RpcState:
-    mode = "Custom Game" if p.provisioning_flow == "CustomGame" else queue_name(p.queue_id)
+    mode = (
+        "Custom Game" if p.provisioning_flow == "CustomGame" else queue_name(p.queue_id)
+    )
     mp = map_name(p.match_map)
     return RpcState(
         details=f"{mode} · {mp}" if mp else mode,

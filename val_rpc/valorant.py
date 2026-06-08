@@ -1,5 +1,3 @@
-"""Local VALORANT client API access (I/O layer)."""
-
 from __future__ import annotations
 
 import requests
@@ -14,7 +12,9 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 class ValorantClient:
     """Talks to the local Riot Client API exposed via the lockfile."""
 
-    def __init__(self, lockfile: Lockfile, session: requests.Session | None = None) -> None:
+    def __init__(
+        self, lockfile: Lockfile, session: requests.Session | None = None
+    ) -> None:
         self._lock = lockfile
         self._http = session or requests.Session()
         self._http.auth = ("riot", lockfile.password)

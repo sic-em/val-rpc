@@ -1,5 +1,3 @@
-"""Decoded VALORANT presence (pure data + parsing, no I/O)."""
-
 from __future__ import annotations
 
 import base64
@@ -11,17 +9,17 @@ from dataclasses import dataclass
 class Presence:
     """The fields of the base64 `private` blob that we actually use."""
 
-    session_loop_state: str          # MENUS | PREGAME | INGAME
-    provisioning_flow: str           # Matchmaking | CustomGame | SkillTest | ...
-    party_state: str                 # DEFAULT | MATCHMAKING | ...
-    queue_id: str                    # competitive | unrated | "" | ...
-    match_map: str                   # "/Game/Maps/Ascent/Ascent" or ""
-    current_team: str                # Blue | Red | ""
+    session_loop_state: str  # MENUS | PREGAME | INGAME
+    provisioning_flow: str  # Matchmaking | CustomGame | SkillTest | ...
+    party_state: str  # DEFAULT | MATCHMAKING | ...
+    queue_id: str  # competitive | unrated | "" | ...
+    match_map: str  # "/Game/Maps/Ascent/Ascent" or ""
+    current_team: str  # Blue | Red | ""
     ally_score: int
     enemy_score: int
     party_size: int
     max_party_size: int
-    party_accessibility: str         # OPEN | CLOSED
+    party_accessibility: str  # OPEN | CLOSED
     is_idle: bool
 
     @classmethod

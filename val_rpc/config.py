@@ -6,12 +6,9 @@ import os
 
 POLL_INTERVAL_SECONDS = 15
 
+# Discord application ID (public, not a secret). Override with VALRPC_CLIENT_ID.
+DEFAULT_CLIENT_ID = "1202725698406453248"
+
 
 def client_id() -> str:
-    cid = os.environ.get("VALRPC_CLIENT_ID")
-    if not cid:
-        raise SystemExit(
-            "Set VALRPC_CLIENT_ID to your Discord application ID "
-            "(https://discord.com/developers/applications)."
-        )
-    return cid
+    return os.environ.get("VALRPC_CLIENT_ID", DEFAULT_CLIENT_ID)

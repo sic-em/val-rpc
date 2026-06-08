@@ -1,5 +1,3 @@
-"""Entry point: poll VALORANT and mirror its state to Discord."""
-
 from __future__ import annotations
 
 import time
@@ -55,7 +53,7 @@ def run(interval: int = config.POLL_INTERVAL_SECONDS) -> None:
 
 
 def _idle(discord: DiscordPresence, last: tuple | None) -> None:
-    """Clear the presence once when VALORANT is gone, return the reset marker."""
+    """Clear the presence once when VALORANT is gone"""
     if last is not None:
         discord.clear()
         print("VALORANT closed — cleared presence.")

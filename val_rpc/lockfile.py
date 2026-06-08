@@ -1,5 +1,3 @@
-"""Read the Riot Client lockfile (data access layer)."""
-
 from __future__ import annotations
 
 import os
@@ -21,7 +19,6 @@ class Lockfile:
 
 
 def default_lockfile_path() -> Path:
-    """Standard Windows location written while the Riot Client runs."""
     local = os.environ.get("LOCALAPPDATA", "")
     return Path(local) / "Riot Games" / "Riot Client" / "Config" / "lockfile"
 
@@ -36,4 +33,6 @@ def read_lockfile(path: Path | None = None) -> Lockfile:
         raise LockfileNotFound(f"lockfile not found at {path} — is VALORANT running?")
 
     name, pid, port, password, protocol = path.read_text().strip().split(":")
-    return Lockfile(name=name, pid=int(pid), port=int(port), password=password, protocol=protocol)
+    return Lockfile(
+        name=name, pid=int(pid), port=int(port), password=password, protocol=protocol
+    )
